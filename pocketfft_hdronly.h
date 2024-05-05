@@ -401,13 +401,17 @@ struct util // hack to avoid duplicate symbols
     return result*double(ni);
     }
 
-  /* returns the smallest composite of 2, 3, 5, 7 and 11 which is >= n */
-  static POCKETFFT_NOINLINE size_t good_size_cmplx(size_t n)
+  /* returns the smallest composite of 2, 3, 5, 7 and 11 which is >= n
+     and a multiple of required_factor. */
+  static POCKETFFT_NOINLINE size_t good_size_cmplx(size_t n,
+    size_t required_factor=1)
     {
-    if (n<=12) return n;
+    if (required_factor<1)
+      throw std::runtime_error("required factor must not be 0");
+    if ((n<=12)&&(required_factor==1)) return n;
 
-    size_t bestfac=2*n;
-    for (size_t f11=1; f11<bestfac; f11*=11)
+    size_t bestfac=~(size_t(0));
+    for (size_t f11=required_factor; f11<bestfac; f11*=11)
       for (size_t f117=f11; f117<bestfac; f117*=7)
         for (size_t f1175=f117; f1175<bestfac; f1175*=5)
           {
@@ -430,13 +434,17 @@ struct util // hack to avoid duplicate symbols
     return bestfac;
     }
 
-  /* returns the smallest composite of 2, 3, 5 which is >= n */
-  static POCKETFFT_NOINLINE size_t good_size_real(size_t n)
+  /* returns the smallest composite of 2, 3, 5 which is >= n
+     and a multiple of required_factor. */
+  static POCKETFFT_NOINLINE size_t good_size_real(size_t n,
+    size_t required_factor=1)
     {
-    if (n<=6) return n;
+    if (required_factor<1)
+      throw std::runtime_error("required factor must not be 0");
+    if ((n<=6)&&(required_factor==1)) return n;
 
-    size_t bestfac=2*n;
-    for (size_t f5=1; f5<bestfac; f5*=5)
+    size_t bestfac=~(size_t(0));
+    for (size_t f5=required_factor; f5<bestfac; f5*=5)
       {
       size_t x = f5;
       while (x<n) x *= 2;
