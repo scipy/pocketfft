@@ -35,7 +35,7 @@ Twiddle factor computation:
 
 - making use of symmetries to reduce number of sin/cos evaluations
 - all angles are reduced to the range `[0; pi/4]` for higher accuracy
-- if `n` sin/cos pairs are required, the trogonometric functions are only called
+- if `n` sin/cos pairs are required, the trigonometric functions are only called
   `2*sqrt(n)` times; the remaining values are obtained by evaluating the
   angle addition theorems in a numerically accurate way.
 
