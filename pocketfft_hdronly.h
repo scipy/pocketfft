@@ -402,12 +402,10 @@ struct util // hack to avoid duplicate symbols
     return result*double(ni);
     }
 
-  /* returns the smallest composite of 2, 3, 5, 7 and 11 which is >= n */
+  /* inner workings of good_size_cmplx() */
   template<typename UIntT>
-  static POCKETFFT_NOINLINE UIntT good_size_cmplx(UIntT n)
+  static POCKETFFT_NOINLINE UIntT good_size_cmplx_typed(UIntT n)
     {
-    static_assert(std::numeric_limits<UIntT>::is_integer && (!std::numeric_limits<UIntT>::is_signed),
-      "type must be unsigned integer");
     if (n<=12) return n;
     if (n>std::numeric_limits<UIntT>::max()/11/2)
       {
@@ -415,7 +413,7 @@ struct util // hack to avoid duplicate symbols
       if (sizeof(UIntT)<sizeof(std::uint64_t))
         {
         // We can try using this algorithm with 64-bit integers:
-        std::uint64_t res = good_size_cmplx(uint64_t(n));
+        std::uint64_t res = good_size_cmplx_typed<std::uint64_t>(n);
         if (res<=std::numeric_limits<UIntT>::max())
           return static_cast<UIntT>(res);
         }
@@ -446,6 +444,11 @@ struct util // hack to avoid duplicate symbols
           }
     return bestfac;
     }
+  /* returns the smallest composite of 2, 3, 5, 7 and 11 which is >= n */
+  static POCKETFFT_NOINLINE size_t good_size_cmplx(size_t n)
+    {
+    return good_size_cmplx_typed(n);
+    }
   /* returns the smallest composite of 2, 3, 5, 7 and 11 which is >= n
      and a multiple of required_factor. */
   static POCKETFFT_NOINLINE size_t good_size_cmplx(size_t n,
@@ -456,12 +459,10 @@ struct util // hack to avoid duplicate symbols
     return good_size_cmplx((n+required_factor-1)/required_factor) * required_factor;
     }
 
-  /* returns the smallest composite of 2, 3, 5 which is >= n */
+  /* inner workings of good_size_real() */
   template<typename UIntT>
-  static POCKETFFT_NOINLINE UIntT good_size_real(UIntT n)
+  static POCKETFFT_NOINLINE UIntT good_size_real_typed(UIntT n)
     {
-    static_assert(std::numeric_limits<UIntT>::is_integer && (!std::numeric_limits<UIntT>::is_signed),
-      "type must be unsigned integer");
     if (n<=6) return n;
     if (n>std::numeric_limits<UIntT>::max()/5/2)
     {
@@ -469,7 +470,7 @@ struct util // hack to avoid duplicate symbols
       if (sizeof(UIntT)<sizeof(std::uint64_t))
         {
         // We can try using this algorithm with 64-bit integers:
-        std::uint64_t res = good_size_real(std::uint64_t(n));
+        std::uint64_t res = good_size_real_typed<std::uint64_t>(n);
         if (res<=std::numeric_limits<UIntT>::max())
           return static_cast<UIntT>(res);
         }
@@ -498,6 +499,11 @@ struct util // hack to avoid duplicate symbols
       }
     return bestfac;
     }
+  /* returns the smallest composite of 2, 3, 5 which is >= n */
+  static POCKETFFT_NOINLINE size_t good_size_real(size_t n)
+    {
+    return good_size_real_typed(n);
+    }
   /* returns the smallest composite of 2, 3, 5 which is >= n
      and a multiple of required_factor. */
   static POCKETFFT_NOINLINE size_t good_size_real(size_t n,
@@ -508,12 +514,10 @@ struct util // hack to avoid duplicate symbols
     return good_size_real((n+required_factor-1)/required_factor) * required_factor;
     }
 
-  /* returns the largest composite of 2, 3, 5, 7 and 11 which is <= n */
+  /* inner workings of prev_good_size_cmplx() */
   template<typename UIntT>
-  static POCKETFFT_NOINLINE UIntT prev_good_size_cmplx(UIntT n)
+  static POCKETFFT_NOINLINE UIntT prev_good_size_cmplx_typed(UIntT n)
     {
-    static_assert(std::numeric_limits<UIntT>::is_integer && (!std::numeric_limits<UIntT>::is_signed),
-      "type must be unsigned integer");
     if (n<=12) return n;
     if (n>std::numeric_limits<UIntT>::max()/11)
     {
@@ -521,7 +525,7 @@ struct util // hack to avoid duplicate symbols
       if (sizeof(UIntT)<sizeof(std::uint64_t))
       {
         // We can try using this algorithm with 64-bit integers:
-        std::uint64_t res = prev_good_size_cmplx(std::uint64_t(n));
+        std::uint64_t res = prev_good_size_cmplx_typed<std::uint64_t>(n);
         if (res<=std::numeric_limits<UIntT>::max())
           return static_cast<UIntT>(res);
       }
@@ -548,13 +552,16 @@ struct util // hack to avoid duplicate symbols
           }
     return bestfound;
     }
-
-  /* returns the largest composite of 2, 3, 5 which is <= n */
-  template<typename UIntT>
-  static POCKETFFT_NOINLINE UIntT prev_good_size_real(UIntT n)
+  /* returns the largest composite of 2, 3, 5, 7 and 11 which is <= n */
+  static POCKETFFT_NOINLINE size_t prev_good_size_cmplx(size_t n)
     {
-    static_assert(std::numeric_limits<UIntT>::is_integer && (!std::numeric_limits<UIntT>::is_signed),
-      "type must be unsigned integer");
+    return prev_good_size_cmplx_typed(n);
+    }
+
+  /* inner workings of prev_good_size_real() */
+  template<typename UIntT>
+  static POCKETFFT_NOINLINE UIntT prev_good_size_real_typed(UIntT n)
+    {
     if (n<=6) return n;
     if (n>std::numeric_limits<UIntT>::max()/5)
     {
@@ -562,7 +569,7 @@ struct util // hack to avoid duplicate symbols
       if (sizeof(UIntT)<sizeof(std::uint64_t))
       {
         // We can try using this algorithm with 64-bit integers:
-        std::uint64_t res = prev_good_size_real(std::uint64_t(n));
+        std::uint64_t res = prev_good_size_real_typed<std::uint64_t>(n);
         if (res<=std::numeric_limits<UIntT>::max())
           return static_cast<UIntT>(res);
       }
@@ -586,6 +593,11 @@ struct util // hack to avoid duplicate symbols
         }
       }
     return bestfound;
+    }
+  /* returns the largest composite of 2, 3, 5 which is <= n */
+  static POCKETFFT_NOINLINE size_t prev_good_size_real(size_t n)
+    {
+    return prev_good_size_real_typed(n);
     }
 
   static size_t prod(const shape_t &shape)
