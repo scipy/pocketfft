@@ -406,6 +406,8 @@ struct util // hack to avoid duplicate symbols
   template<typename UIntT>
   static POCKETFFT_NOINLINE UIntT good_size_cmplx_typed(UIntT n)
     {
+    static_assert(std::numeric_limits<UIntT>::is_integer && (!std::numeric_limits<UIntT>::is_signed),
+      "type must be unsigned integer");
     if (n<=12) return n;
     if (n>std::numeric_limits<UIntT>::max()/11/2)
       {
@@ -463,6 +465,8 @@ struct util // hack to avoid duplicate symbols
   template<typename UIntT>
   static POCKETFFT_NOINLINE UIntT good_size_real_typed(UIntT n)
     {
+    static_assert(std::numeric_limits<UIntT>::is_integer && (!std::numeric_limits<UIntT>::is_signed),
+      "type must be unsigned integer");
     if (n<=6) return n;
     if (n>std::numeric_limits<UIntT>::max()/5/2)
     {
